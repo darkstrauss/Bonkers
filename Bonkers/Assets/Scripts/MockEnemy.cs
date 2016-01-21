@@ -7,6 +7,7 @@ public class MockEnemy : MonoBehaviour
     public GameObject player,CBS;
     public bool activeEnemy;
     public int Health;
+    public int Dmg = 15;
 
     private bool attacked = false;
 
@@ -19,6 +20,7 @@ public class MockEnemy : MonoBehaviour
         CBS = Camera.main.GetComponent<PlayerMovement>().CBS;
     }
 
+
     // Update is called once per frame
     void Update()
     {
@@ -30,18 +32,23 @@ public class MockEnemy : MonoBehaviour
         if (((gameObject.transform.position - player.transform.position).magnitude) <= STARTCOMBATDISTANCE && (attacked == false))
         {
             Debug.Log("TO CLOSE");
-            Attackcylce();
+            StartCoroutine(Attackcylce());
             attacked = true;
         }
-
+        if (Health <= 0)
+        {
+            DEAD();
+        }
     }
 
-    private void Attackcylce()
+    IEnumerator Attackcylce()
     {
         // Call for an attack
         Debug.Log("Starting Attack");
         CBS.SetActive(true);
         CBS.GetComponent<CombatSystem>().IncomingAttack();
+        yield return new WaitForSeconds(5.0f);
+        StartCoroutine(Attackcylce());
     }
 
     public void HealthDown(int amountDOWN)
@@ -57,6 +64,7 @@ public class MockEnemy : MonoBehaviour
 
     private void DEAD()
     {
+        CBS.SetActive(false);
         Destroy(gameObject);
     }
 }

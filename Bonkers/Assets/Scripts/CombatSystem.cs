@@ -1,24 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CombatSystem : MonoBehaviour {
+public class CombatSystem : MonoBehaviour
+{
 
     public float dTime;
+
+    public float Stamina, StaminaIncrease;
     public int Health;
     public GameObject DodgeCircleL, DodgeCircleR;
     public GameObject ActiveEnemy;
-    private PlayerMovement playerMovement;
 
     private IEnumerator coroutine1, coroutine2;
 
     private void Awake()
     {
-        playerMovement = Camera.main.GetComponent<PlayerMovement>();
         ResetCo();
+        StartCombat();
     }
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         Health = 100;
+        // Placeholder enenky code !! REMOVE LATER !!
+        ActiveEnemy = GameObject.FindGameObjectWithTag("enemy");
     }
 
     void OnEnable()
@@ -28,26 +33,35 @@ public class CombatSystem : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
+        if (Health <= 0)
+        {
+            GameOver();
+        }
 
-        
+        Stamina += StaminaIncrease;
         // check health
         // if health reach zero gameover
         // check stamina
-
-	}
-
-    public void StartComabt()
-    {
-        // pause game
     }
+
+    public void StartCombat()
+    {
+
+    }
+
+    // Reset IEnumerators for use later
     private void ResetCo()
     {
         coroutine1 = DodgeVisualIE(dTime, DodgeCircleL);
         coroutine2 = DodgeVisualIE(dTime, DodgeCircleR);
+
+        DodgeCircleL.SetActive(false);
+        DodgeCircleR.SetActive(false);
     }
 
-
+    // Start when a new attack comes in
     public void IncomingAttack()
     {
         DodgeCircleL.transform.localScale = new Vector3(4f, 4f, 4f);
@@ -72,23 +86,38 @@ public class CombatSystem : MonoBehaviour {
         ResetCo();
     }
 
-    // Function to interact with health
+    // Function to decrease health
     public void HealthDown(int amountDOWN)
     {
         Health -= amountDOWN;
     }
 
     // Funchtion to increase health
-    public void HealthUp (int amountUP)
+    public void HealthUp(int amountUP)
     {
         Health += amountUP;
+    }
+
+    // Decrease enemyhealth
+    public void EnemyHealthDown(int amountDOWN)
+    {
+        ActiveEnemy.GetComponent<MockEnemy>().HealthDown(amountDOWN);
+    }
+
+    // Funchtion to increase enemyhealth
+    public void EnemyHealthUp(int amountUP)
+    {
+        ActiveEnemy.GetComponent<MockEnemy>().HealthUp(amountUP);
     }
 
     // Dislpay game over screen + score etc
     private void GameOver()
     {
-        // Display things 
-    } 
+        //Play animtion
+
+        // Show Drag back to cell scene
+
+    }
 
     IEnumerator DodgeVisualIE(float time, GameObject rORl)
     {
@@ -97,13 +126,14 @@ public class CombatSystem : MonoBehaviour {
 
         float currentTime = 0.0f;
 
-        while(currentTime <= time)
+        while (currentTime <= time)
         {
-            rORl.transform.localScale = Vector3.Lerp(originalScale, destinationScale ,  Mathf.SmoothStep(0, 1 ,(currentTime / time)));
+            rORl.transform.localScale = Vector3.Lerp(originalScale, destinationScale, Mathf.SmoothStep(0, 1, (currentTime / time)));
             currentTime += Time.deltaTime;
             yield return null;
         }
         rORl.SetActive(false);
-        HealthDown(10);   
+        HealthDown(ActiveEnemy.GetComponent<MockEnemy>().Dmg);
+        DodgeVisual();
     }
 }

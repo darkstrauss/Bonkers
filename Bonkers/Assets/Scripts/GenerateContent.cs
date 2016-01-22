@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class GenerateContent : MonoBehaviour
 {
     public List<GameObject> availibleGameObjects;
+    public List<GameObject> availibleEnemies;
     public List<Vector3> takenSpots;
     public Text text;
     private Grid grid;
@@ -40,6 +41,7 @@ public class GenerateContent : MonoBehaviour
         Debug.Log("LEVEL SEED: " + SEED);
 
         Generate();
+        GenerateEnemies();
     }
 
     private void Generate()
@@ -138,7 +140,13 @@ public class GenerateContent : MonoBehaviour
     {
         if (amountOfEnemies > 0)
         {
+            int selection = (int)Random.Range(0, availibleEnemies.Count);
 
+            Vector3 placement = new Vector3(Mathf.Floor(Random.Range(0, grid.xSize)) + 0.5f, 1.0f, Mathf.Floor(Random.Range(0, grid.zSize)) + 0.5f);
+            GameObject enemy = Instantiate(availibleEnemies[selection], placement, Quaternion.identity) as GameObject;
+
+            amountOfEnemies--;
+            GenerateEnemies();
         }
     }
 

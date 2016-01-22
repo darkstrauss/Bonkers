@@ -179,7 +179,7 @@ public class SphereParentCode : MonoBehaviour
             }
             if (!strikeFound && strike != "")
             {
-                Debug.LogError("Faulty Input" + strike);
+                Debug.Log("Faulty Input" + strike);
             }
             strikeFound = false;
         }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class EnemyBehaviour : MonoBehaviour
 {
-    public static float GOTOPLAYERDISTANCE = 4.5f;
+    public static float GOTOPLAYERDISTANCE = 3.5f;
     public static float STARTCOMBARDISTANCE = 1.5f;
     private static int WALL = 0;
     private static int FLOOR = 1;
@@ -24,8 +24,8 @@ public class EnemyBehaviour : MonoBehaviour
     private int xSize, zSize;
     public int[,] map;
     public bool selectedPlayer = false;
-
-    private IEnumerator goToPlayer, idle;
+    private bool isIdle, pathComplete, isWaiting;
+    bool process;
 
     public int pathCount;
 
@@ -38,30 +38,16 @@ public class EnemyBehaviour : MonoBehaviour
         zSize = grid.zSize;
         nodeMap = grid.nodeMap;
         map = grid.map;
-        goToPlayer = Move(false);
-        idle = Move(true);
 
-        StartCoroutine(idle);
+        StateMachine(1);
     }
 
-    private IEnumerator Move(bool patrol)
+    private IEnumerator Move()
     {
-        if (patrol)
-        {
-            path = GetPath();
-            Debug.Log("patrolling");
-        }
-        else
-        {
-            path = GetPathToPlayer();
-            Debug.Log("moving to player");
-        }
+        Debug.Log("start");
+        process = true;
 
-        Debug.Log(path.Count);
-
-        bool process = true;
-
-        while (process)
+        while (path != null && path.Count > 0 && process)
         {
             Vector3 movePosition = new Vector3((float)path[path.Count - 1].xPos + 0.5f, 1.0f, (float)path[path.Count - 1].yPos + 0.5f);
             Quaternion targetRotation = Quaternion.LookRotation(movePosition - gameObject.transform.position);
@@ -70,7 +56,7 @@ public class EnemyBehaviour : MonoBehaviour
             while (!gameObject.transform.position.Equals(movePosition))
             {
                 gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, movePosition, moveSpeed * Time.deltaTime);
-                
+                Debug.Log("OI");
                 yield return new WaitForSeconds(0.01f);
             }
 
@@ -82,14 +68,13 @@ public class EnemyBehaviour : MonoBehaviour
 
             if (path.Count <= 1)
             {
-                if (patrol)
-                {
-                    StartCoroutine(idle);
-                }
-                path.Clear();
-                process = false;
+                ResetPath();
+                Debug.Log("done");
+                
             }
         }
+
+        process = false;
     }
 
     private List<MapPosition> FindPath(MapPosition start, MapPosition goal)
@@ -169,6 +154,36 @@ public class EnemyBehaviour : MonoBehaviour
         return null;
     }
 
+    public void StateMachine(int state)
+    {
+        isIdle = false;
+        selectedPlayer = false;
+        isWaiting = false;
+        switch (state)
+        {
+            case 1:
+                path = GetPath();
+                StartCoroutine(Move());
+                isIdle = true;
+                Debug.Log("idle");
+                break;
+            case 2:
+                path = GetPathToPlayer();
+                StartCoroutine(Move());
+                selectedPlayer = true;
+                Debug.Log("chasing");
+                break;
+            case 3:
+                ResetPath();
+                ResetPosition(transform.position);
+                isWaiting = true;
+                Debug.Log("waiting");
+                break;
+            case 4:
+                break;
+        }
+    }
+
     private List<AStarNode> GetNeighbours(MapPosition current)
     {
         List<AStarNode> neighbours = new List<AStarNode>();
@@ -190,28 +205,27 @@ public class EnemyBehaviour : MonoBehaviour
 
     private List<MapPosition> GetPath()
     {
-        if (path != null && path.Count > 0)
-        {
-            path.Clear();
-        }
-        closed.Clear();
-        open.Clear();
+        ResetPath();
+
+        
 
         currentNode = nodeMap[Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.z)];
         List<AStarNode> neighbours = GetNeighbours(currentNode.position);
-        goal = nodeMap[neighbours[0].position.xPos, neighbours[0].position.yPos];
+        goal = nodeMap[neighbours[Random.Range(0, neighbours.Count)].position.xPos, neighbours[Random.Range(0, neighbours.Count)].position.yPos];
 
-        return FindPath(currentNode.position, goal.position);
+        path = FindPath(currentNode.position, goal.position);
+
+        if (path != null && path.Count > 1)
+        {
+            path.RemoveAt(path.Count - 1);
+        }
+
+        return path;
     }
 
     private List<MapPosition> GetPathToPlayer()
     {
-        if (path != null && path.Count > 0)
-        {
-            path.Clear();
-        }
-        closed.Clear();
-        open.Clear();
+        ResetPath();
 
         currentNode = nodeMap[Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.z)];
         goal = nodeMap[Mathf.FloorToInt(player.transform.position.x), Mathf.FloorToInt(player.transform.position.z)];
@@ -221,28 +235,35 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void Update()
     {
-        if ((gameObject.transform.position - player.transform.position).magnitude <= GOTOPLAYERDISTANCE && !selectedPlayer)
+        if (!process && (gameObject.transform.position - player.transform.position).magnitude <= GOTOPLAYERDISTANCE && !selectedPlayer)
         {
-            //StopCoroutine(idle);
-            StartCoroutine(goToPlayer);
-
-            selectedPlayer = true;
+            StateMachine(2);
         }
 
-        if ((gameObject.transform.position - player.transform.position).magnitude <= STARTCOMBARDISTANCE)
+        if (!isWaiting && (gameObject.transform.position - player.transform.position).magnitude <= STARTCOMBARDISTANCE)
         {
-            StopAllCoroutines();
-            ResetPosition(transform.position);
+            StateMachine(3);
         }
 
-        if (MapPosition.EucludianDistance(currentNode.position, goal.position) > GOTOPLAYERDISTANCE)
+        if (!process && (gameObject.transform.position - player.transform.position).magnitude >= GOTOPLAYERDISTANCE)
         {
-            selectedPlayer = false;
+            StateMachine(1);
         }
     }
 
     private void ResetPosition(Vector3 position)
     {
         transform.position = new Vector3(Mathf.Floor(position.x) + 0.5f, 1.0f, Mathf.Floor(position.z) + 0.5f);
+    }
+
+    private void ResetPath()
+    {
+        if (path != null && path.Count > 0)
+        {
+            path.Clear();
+        }
+
+        open.Clear();
+        closed.Clear();
     }
 }

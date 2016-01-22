@@ -42,6 +42,20 @@ public class PlayerMovement : MonoBehaviour
         FollowPlayer();
     }
 
+    public void CancelMovement()
+    {
+        ResetPosition(player.transform.position);
+        GetFloor().ClearPath();
+        if (floorTiles != null && floorTiles.Count > 0)
+        {
+            for (int i = 0; i < floorTiles.Count; i++)
+            {
+                Destroy(floorTiles[i]);
+            }
+            floorTiles.Clear();
+        }
+    }
+
     void LateUpdate()
     {
         Vector3 cameraPosition = new Vector3(player.transform.position.x + 4.3f, 9.0f, player.transform.position.z - 7.3f);
@@ -92,7 +106,7 @@ public class PlayerMovement : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit))
             {
-                if (hit.collider.tag == "floor")
+                if (hit.collider.tag == "floor" && !CBS.activeInHierarchy)
                 {
                     player.GetComponent<ObjectCollision>().CollisionDetection();
                     Vector3 targetPoint = hit.point;
@@ -159,9 +173,12 @@ public class PlayerMovement : MonoBehaviour
                 yield return new WaitForSeconds(0.01f);
             }
 
-            Destroy(floorTiles[floorTiles.Count - 1]);
-            floorTiles.RemoveAt(floorTiles.Count - 1);
-
+            if (floorTiles != null && floorTiles.Count > 0)
+            {
+                Destroy(floorTiles[floorTiles.Count - 1]);
+                floorTiles.RemoveAt(floorTiles.Count - 1);
+            }
+            
             if (path.Count == 0)
             {
                 process = false;

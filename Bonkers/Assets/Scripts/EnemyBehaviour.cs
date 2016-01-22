@@ -11,6 +11,7 @@ public class EnemyBehaviour : MonoBehaviour
     private static int START = 2;
     private static int GOAL = 3;
 
+    private GameObject CBS;
     private float moveSpeed = 3.0f;
     private GameObject player;
     private PlayerMovement playerMovement;
@@ -32,6 +33,7 @@ public class EnemyBehaviour : MonoBehaviour
     public void Start()
     {
         playerMovement = Camera.main.GetComponent<PlayerMovement>();
+        CBS = Camera.main.GetComponent<PlayerMovement>().CBS;
         player = playerMovement.player;
         grid = playerMovement.GetFloor();
         xSize = grid.xSize;
@@ -39,7 +41,7 @@ public class EnemyBehaviour : MonoBehaviour
         nodeMap = grid.nodeMap;
         map = grid.map;
 
-        StateMachine(1);
+        StateMachine("idle");
     }
 
     private IEnumerator Move()
@@ -154,32 +156,30 @@ public class EnemyBehaviour : MonoBehaviour
         return null;
     }
 
-    public void StateMachine(int state)
+    public void StateMachine(string state)
     {
         isIdle = false;
         selectedPlayer = false;
         isWaiting = false;
         switch (state)
         {
-            case 1:
+            case "idle":
                 path = GetPath();
                 StartCoroutine(Move());
                 isIdle = true;
                 Debug.Log("idle");
                 break;
-            case 2:
+            case "chase":
                 path = GetPathToPlayer();
                 StartCoroutine(Move());
                 selectedPlayer = true;
                 Debug.Log("chasing");
                 break;
-            case 3:
+            case "wait":
                 ResetPath();
                 ResetPosition(transform.position);
                 isWaiting = true;
                 Debug.Log("waiting");
-                break;
-            case 4:
                 break;
         }
     }
@@ -235,19 +235,19 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void Update()
     {
-        if (!process && (gameObject.transform.position - player.transform.position).magnitude <= GOTOPLAYERDISTANCE && !selectedPlayer)
+        if (!process && (gameObject.transform.position - player.transform.position).magnitude <= GOTOPLAYERDISTANCE && !selectedPlayer && !CBS.activeInHierarchy)
         {
-            StateMachine(2);
+            StateMachine("chase");
         }
 
-        if (!isWaiting && (gameObject.transform.position - player.transform.position).magnitude <= STARTCOMBARDISTANCE)
+        if (!isWaiting && (gameObject.transform.position - player.transform.position).magnitude <= STARTCOMBARDISTANCE || CBS.activeInHierarchy)
         {
-            StateMachine(3);
+            StateMachine("wait");
         }
 
-        if (!process && (gameObject.transform.position - player.transform.position).magnitude >= GOTOPLAYERDISTANCE)
+        if (!process && (gameObject.transform.position - player.transform.position).magnitude >= GOTOPLAYERDISTANCE && !CBS.activeInHierarchy)
         {
-            StateMachine(1);
+            StateMachine("idle");
         }
     }
 

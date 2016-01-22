@@ -11,6 +11,7 @@ GameObject:
   - 33: {fileID: 3310820}
   - 23: {fileID: 2362654}
   - 114: {fileID: 11404158}
+  - 114: {fileID: 11476082}
   m_Layer: 0
   m_Name: MockEnemy
   m_TagString: enemy
@@ -78,6 +79,20 @@ MonoBehaviour:
   CBS: {fileID: 0}
   activeEnemy: 0
   Health: 100
+  Dmg: 15
+--- !u!114 &11476082
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8875a67355f406c41a00c043caa661cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectedPlayer: 0
+  pathCount: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

@@ -465,7 +465,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 408730, guid: 7737647c22c1fc64a88d5cd030c352ce, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 9.5
+      value: .5
       objectReference: {fileID: 0}
     - target: {fileID: 408730, guid: 7737647c22c1fc64a88d5cd030c352ce, type: 2}
       propertyPath: m_LocalPosition.y
@@ -1064,6 +1064,18 @@ Prefab:
     - target: {fileID: 11445632, guid: fc318f8d2be070046bea7d36ef21376e, type: 2}
       propertyPath: amountOfEnemies
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11466674, guid: fc318f8d2be070046bea7d36ef21376e, type: 2}
+      propertyPath: xSize
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11466674, guid: fc318f8d2be070046bea7d36ef21376e, type: 2}
+      propertyPath: zSize
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11445632, guid: fc318f8d2be070046bea7d36ef21376e, type: 2}
+      propertyPath: amountOfItems
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: fc318f8d2be070046bea7d36ef21376e, type: 2}

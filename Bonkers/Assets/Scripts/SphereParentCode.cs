@@ -53,6 +53,20 @@ public class SphereParentCode : MonoBehaviour
         UsableStrikes.Add("Horizontal");
         UsableStrikes.Add("Vertical");
         UsableStrikes.Add("Diagonal");
+        UsableStrikes.Add("Jab");
+        UsableStrikes.Add("Quick Punch");
+        UsableStrikes.Add("Hook");
+        UsableStrikes.Add("One-Two Punch");
+        UsableStrikes.Add("Wombo Combo");
+        UsableStrikes.Add("9");
+        UsableStrikes.Add("10");
+        UsableStrikes.Add("11");
+        UsableStrikes.Add("12");
+        UsableStrikes.Add("13");
+        UsableStrikes.Add("14");
+        UsableStrikes.Add("15");
+        UsableStrikes.Add("16");
+        UsableStrikes.Add("LastSpiral");
 
         Buttons.Add(Button1);
         Buttons.Add(Button2);
@@ -117,6 +131,11 @@ public class SphereParentCode : MonoBehaviour
     {
         striking = false;
         currentStrike++;
+        CBS.GetComponent<CombatSystem>().Stamina -= 50f;
+        if (CBS.GetComponent<CombatSystem>().Stamina <= 50f)
+        {
+            ReturnSphereIDs();
+        }
 
         StartCoroutine(ChangeButtonColor());
 
@@ -170,6 +189,7 @@ public class SphereParentCode : MonoBehaviour
                         strikeFound = true;
                         TotalDMG += (int.Parse(strikeData[item][1]["AttackStats"][2].ToString()));
                         OutputStrikeList.Add(strikeData[item][1]["AttackStats"][0].ToString());
+                        
                         break;
                     }
 
@@ -188,7 +208,6 @@ public class SphereParentCode : MonoBehaviour
         // Combo Call
         ComboCall();
 
-        // Add Dmg Callculation
 
         // Outputcall
         OutputFun();
@@ -199,11 +218,44 @@ public class SphereParentCode : MonoBehaviour
 
     void ComboCall()
     {
-        try
+        bool combo1 = false;
+        bool combo2 = false;
+        bool combo3 = false;
+
+
+        if (IDString2 != "")
         {
-            if (IDString2 != "")
+            if (Strike1[Strike1.Count - 1] == (Strike2[0]))
             {
-                if (Strike1[Strike1.Count - 1] == (Strike2[0]))
+                VisualCombo++;
+                Output.text = ("Combo " + VisualCombo + "X");
+                foreach (string item in UsableStrikes)
+                {
+                    for (int i = 0; i < strikeData[item][0]["pos"].Count; i++)
+                    {
+                        if (IDString2 == strikeData[item][0]["pos"][i].ToString())
+                        {
+                            TotalDMG *= (int.Parse(strikeData[item][1]["AttackStats"][1].ToString()));
+                            combo1 = true;
+                            break;
+                        }
+                        if (combo1)
+                            break;
+                    }
+                    if (combo1)
+                        break;
+                }
+
+            }
+            else
+            {
+                VisualCombo = 1;
+                Output.text = ("Combo " + VisualCombo + "X");
+            }
+
+            if (IDString3 != "")
+            {
+                if (Strike2[Strike2.Count - 1] == (Strike3[0]))
                 {
                     VisualCombo++;
                     Output.text = ("Combo " + VisualCombo + "X");
@@ -211,91 +263,77 @@ public class SphereParentCode : MonoBehaviour
                     {
                         for (int i = 0; i < strikeData[item][0]["pos"].Count; i++)
                         {
-                            if (IDString2 == strikeData[item][0]["pos"][i].ToString())
+                            if (IDString3 == strikeData[item][0]["pos"][i].ToString())
                             {
                                 TotalDMG *= (int.Parse(strikeData[item][1]["AttackStats"][1].ToString()));
+                                combo2 = true;
                                 break;
                             }
+                            if (combo2)
+                                break;
                         }
-                        if (strikeFound)
+                        if (combo2)
                             break;
                     }
+                }
+                else
+                {
+                    VisualCombo = 1;
+                    Output.text = ("Combo " + VisualCombo + "X");
+                } 
+            }
 
+            if (IDString4 != "")
+            {
+                if (Strike3[Strike3.Count - 1] == (Strike4[0]))
+                {
+                    VisualCombo++;
+                    Output.text = ("Combo " + VisualCombo + "X");
+                    foreach (string item in UsableStrikes)
+                    {
+                        for (int i = 0; i < strikeData[item][0]["pos"].Count; i++)
+                        {
+                            if (IDString4 == strikeData[item][0]["pos"][i].ToString())
+                            {
+                                TotalDMG *= (int.Parse(strikeData[item][1]["AttackStats"][2].ToString()));
+                                combo3 = true;
+                                break;
+                            }
+                            if (combo3)
+                                break;
+                        }
+                        if (combo3)
+                            break;
+                    }
                 }
                 else
                 {
                     VisualCombo = 1;
                     Output.text = ("Combo " + VisualCombo + "X");
                 }
+            }
 
-                if (IDString3 != "")
-                {
-                    if (Strike2[Strike2.Count - 1] == (Strike3[0]))
-                    {
-                        VisualCombo++;
-                        Output.text = ("Combo " + VisualCombo + "X");
-                        foreach (string item in UsableStrikes)
-                        {
-                            for (int i = 0; i < strikeData[item][0]["pos"].Count; i++)
-                            {
-                                if (IDString3 == strikeData[item][0]["pos"][i].ToString())
-                                {
-                                    TotalDMG *= (int.Parse(strikeData[item][1]["AttackStats"][1].ToString()));
-                                    break;
-                                }
-                            }
-                            if (strikeFound)
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        VisualCombo = 1;
-                        Output.text = ("Combo " + VisualCombo + "X");
-                    }
-                    if (IDString4 != "")
-                    {
-                        if (Strike3[Strike3.Count - 1] == (Strike4[0]))
-                        {
-                            VisualCombo++;
-                            Output.text = ("Combo " + VisualCombo + "X");
-                            foreach (string item in UsableStrikes)
-                            {
-                                for (int i = 0; i < strikeData[item][0]["pos"].Count; i++)
-                                {
-                                    if (IDString4 == strikeData[item][0]["pos"][i].ToString())
-                                    {
-                                        TotalDMG *= (int.Parse(strikeData[item][1]["AttackStats"][2].ToString()));
-                                        break;
-                                    }
-                                }
-                                if (strikeFound)
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            VisualCombo = 1;
-                            Output.text = ("Combo " + VisualCombo + "X");
-                        }
-                    }
-                }
-            }
-            else
-            {
-                VisualCombo = 1;
-                Output.text = ("Combo " + VisualCombo + "X");
-            }
         }
-        catch
+        else
         {
-            Debug.LogError("fial");
+            VisualCombo = 1;
+            Output.text = ("Combo " + VisualCombo + "X");
         }
     }
+
+    private void DisplayInput()
+    {
+        foreach (string item in OutputStrikeList)
+        {
+            // Add Something to display input attacks at the top of the screen
+        }
+    }
+
     private void Reset()
     {
         VisualCombo = 1;
         InputStrikeList.Clear();
+        OutputStrikeList.Clear();
         Strike1.Clear();
         Strike2.Clear();
         Strike3.Clear();
@@ -307,6 +345,7 @@ public class SphereParentCode : MonoBehaviour
         currentStrike = 1;
         TotalDMG = 0;
     }
+
     public void OutputFun()
     {
         CBS.GetComponent<CombatSystem>().EnemyHealthDown(TotalDMG); 
@@ -315,7 +354,7 @@ public class SphereParentCode : MonoBehaviour
 
     IEnumerator WaitForStrike()
     {
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(0.5f);
         if (striking == false)
         {
             ReturnSphereIDs();
@@ -330,5 +369,15 @@ public class SphereParentCode : MonoBehaviour
             button.GetComponent<Image>().color = Color.green;
         }
 
+    }
+
+    private void OnDisable()
+    {
+        Reset();
+    }
+
+    private void OnEnable()
+    {
+        Reset();
     }
 }

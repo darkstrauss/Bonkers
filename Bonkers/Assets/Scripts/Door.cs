@@ -10,7 +10,7 @@ public class Door : MonoBehaviour {
     private Wall wall;
     private Mesh mesh;
     public Vector3[] doorVerts;
-    public GameObject floor;
+    public GameObject floor, CBS;
     public Material doorMaterial;
     private Vector2 materialScale;
     private Vector2[] uv;
@@ -28,7 +28,7 @@ public class Door : MonoBehaviour {
 
         wall = transform.parent.GetComponent<Wall>();
         floor = transform.parent.transform.parent.gameObject;
-            
+        CBS = Camera.main.GetComponent<PlayerMovement>().CBS;
         playerInteraction = Camera.main.GetComponent<PlayerMovement>();
         
         if (tag == "down" || tag == "back")
@@ -144,9 +144,9 @@ public class Door : MonoBehaviour {
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerStay()
     {
-        if (justTraveled > TIMEWAIT && !playerInteraction.traveling)
+        if (justTraveled > TIMEWAIT && !playerInteraction.traveling && !CBS.activeInHierarchy)
         {
             GameObject trackPrevious = playerInteraction.activeFloor;
             playerInteraction.player.GetComponent<ObjectCollision>().ForceClearList();
@@ -164,6 +164,11 @@ public class Door : MonoBehaviour {
                         Vector3 teleportToDoor = teleportDoor.GetComponent<Door>().doorVerts[0] + new Vector3(0.5f, 0.0f, 0.5f);
                         playerInteraction.ResetPosition(teleportToDoor);
                         Destroy(trackPrevious);
+                        foreach (GameObject enemy in playerInteraction.enemies)
+                        {
+                            Destroy(enemy);
+                        }
+                        playerInteraction.enemies.TrimExcess();
 
                         break;
                     }
@@ -179,6 +184,11 @@ public class Door : MonoBehaviour {
                         Vector3 teleportToDoor = teleportDoor.GetComponent<Door>().doorVerts[0] + new Vector3(0.5f, 0.0f, 0.5f);
                         playerInteraction.ResetPosition(teleportToDoor);
                         Destroy(trackPrevious);
+                        foreach (GameObject enemy in playerInteraction.enemies)
+                        {
+                            Destroy(enemy);
+                        }
+                        playerInteraction.enemies.TrimExcess();
 
                         break;
                     }
@@ -194,6 +204,11 @@ public class Door : MonoBehaviour {
                         Vector3 teleportToDoor = teleportDoor.GetComponent<Door>().doorVerts[0] + new Vector3(0.5f, 0.0f, -0.5f);
                         playerInteraction.ResetPosition(teleportToDoor);
                         Destroy(trackPrevious);
+                        foreach (GameObject enemy in playerInteraction.enemies)
+                        {
+                            Destroy(enemy);
+                        }
+                        playerInteraction.enemies.TrimExcess();
 
                         break;
                     }
@@ -209,6 +224,11 @@ public class Door : MonoBehaviour {
                         Vector3 teleportToDoor = teleportDoor.GetComponent<Door>().doorVerts[0] + new Vector3(-0.5f, 0.0f, 0.5f);
                         playerInteraction.ResetPosition(teleportToDoor);
                         Destroy(trackPrevious);
+                        foreach (GameObject enemy in playerInteraction.enemies)
+                        {
+                            Destroy(enemy);
+                        }
+                        playerInteraction.enemies.TrimExcess();
 
                         break;
                     }

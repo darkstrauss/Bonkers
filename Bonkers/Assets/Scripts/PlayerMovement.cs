@@ -5,8 +5,8 @@ using System.Collections.Generic;
 public class PlayerMovement : MonoBehaviour
 {
     public List<GameObject> floors;
-    public List<GameObject> doors;
     public List<GameObject> floorTiles;
+    public List<GameObject> enemies;
     private Camera mainCamera;
     public GameObject player, activeFloor, pointer, previousHit, floorTile, CBS;
     private Grid activeGrid;
@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
+        Screen.SetResolution(1920, 1080, true);
         mainCamera = Camera.main;
         playerTransform = player.transform;
         destinationPosition = playerTransform.position;
@@ -215,7 +216,6 @@ public class PlayerMovement : MonoBehaviour
     public void ClearRoomList()
     {
         GetFloor().ClearPath();
-        doors.RemoveRange(0, doors.Count);
 
         if (floorTiles != null && floorTiles.Count > 0)
         {

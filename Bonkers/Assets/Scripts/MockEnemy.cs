@@ -31,7 +31,6 @@ public class MockEnemy : MonoBehaviour
 
         if (((gameObject.transform.position - player.transform.position).magnitude) <= STARTCOMBATDISTANCE && (attacked == false))
         {
-            Debug.Log("TO CLOSE");
             StartCoroutine(Attackcylce());
             attacked = true;
         }
@@ -43,11 +42,10 @@ public class MockEnemy : MonoBehaviour
 
     IEnumerator Attackcylce()
     {
-        // Call for an attack
-        Debug.Log("Starting Attack");
         CBS.SetActive(true);
+        CBS.GetComponent<CombatSystem>().ActiveEnemy = gameObject;
         CBS.GetComponent<CombatSystem>().IncomingAttack();
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(Random.Range(10.0f, 20.0f));
         StartCoroutine(Attackcylce());
     }
 

@@ -97,9 +97,16 @@ MonoBehaviour:
   - {fileID: 162938, guid: aa0e19d4309f8864a88f928732addcbd, type: 2}
   - {fileID: 178052, guid: 6161045a74414ad4b90ebe415f80b401, type: 2}
   - {fileID: 157822, guid: c866df46e55ea184a8bd482b0976d8ba, type: 2}
+  availibleEnemies:
+  - {fileID: 147796, guid: 7548934f1494d1048834a38e6fa7c8b3, type: 2}
+  - {fileID: 173438, guid: b29d952e93b932e4baa457cef6414d57, type: 2}
+  - {fileID: 136936, guid: e5be4094f2f78c74490630c1bd1b2b58, type: 2}
+  - {fileID: 196408, guid: e8bc59aeececb4f48bcecdc9bf29debc, type: 2}
+  - {fileID: 102328, guid: 8b46c142538219a4fb9b230cda701247, type: 2}
   takenSpots: []
   text: {fileID: 0}
   amountOfItems: 30
+  amountOfEnemies: 3
   SEED: 0
 --- !u!114 &11497832
 MonoBehaviour:
@@ -126,6 +133,10 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: availibleEnemies.Array.size
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: availibleGameObjects.Array.size
       value: 8
@@ -174,6 +185,14 @@ Prefab:
       propertyPath: availibleGameObjects.Array.data[4]
       value: 
       objectReference: {fileID: 155330, guid: baf96c9efbd87b4489d69bc830075c4b, type: 2}
+    - target: {fileID: 0}
+      propertyPath: amountOfEnemies
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: availibleEnemies.Array.data[0]
+      value: 
+      objectReference: {fileID: 112290, guid: 80ef37cc6b4200f46b68fbb8b34a3bfc, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 148094}

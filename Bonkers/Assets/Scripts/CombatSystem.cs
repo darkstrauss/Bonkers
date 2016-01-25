@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class CombatSystem : MonoBehaviour
 {
@@ -10,25 +11,25 @@ public class CombatSystem : MonoBehaviour
     public GameObject DodgeCircleL, DodgeCircleR;
     public GameObject ActiveEnemy;
 
-    private IEnumerator coroutine1, coroutine2;
+    private IEnumerator coroutine1, coroutine2, staminaCO1;
 
     private void Awake()
     {
         ResetCo();
-        StartCombat();
     }
     // Use this for initialization
     void Start()
     {
         Health = 100;
         // Placeholder enenky code !! REMOVE LATER !!
-        ActiveEnemy = GameObject.FindGameObjectWithTag("enemy");
+        //ActiveEnemy = GameObject.FindGameObjectWithTag("enemy");
     }
 
     void OnEnable()
     {
         isActive = true;
         Camera.main.GetComponent<PlayerMovement>().CancelMovement();
+        StartCoroutine(staminaCO1);
         
         // Pause game
         // Update avaiblibe strikes
@@ -47,15 +48,26 @@ public class CombatSystem : MonoBehaviour
             GameOver();
         }
 
-        Stamina += StaminaIncrease;
+      
+        DisplayStamina(Stamina);
+        DisplayHealth(Health);
+        Text text = GameObject.FindGameObjectWithTag("Text").GetComponent<Text>();
+        text.text = Stamina + "";
+
+
         // check health
         // if health reach zero gameover
         // check stamina
     }
 
-    public void StartCombat()
+    private void DisplayStamina(float Amount)
     {
+        // Add movement for Stamina Dispay
+    }
 
+    private void DisplayHealth(int Amount)
+    {
+        // Display Health in someway
     }
 
     // Reset IEnumerators for use later
@@ -63,6 +75,7 @@ public class CombatSystem : MonoBehaviour
     {
         coroutine1 = DodgeVisualIE(dTime, DodgeCircleL);
         coroutine2 = DodgeVisualIE(dTime, DodgeCircleR);
+        staminaCO1 = STIncrease();
 
         DodgeCircleL.SetActive(false);
         DodgeCircleR.SetActive(false);
@@ -121,9 +134,8 @@ public class CombatSystem : MonoBehaviour
     private void GameOver()
     {
         //Play animtion
-
+        Destroy(gameObject);
         // Show Drag back to cell scene
-
     }
 
     IEnumerator DodgeVisualIE(float time, GameObject rORl)
@@ -142,5 +154,17 @@ public class CombatSystem : MonoBehaviour
         rORl.SetActive(false);
         HealthDown(ActiveEnemy.GetComponent<MockEnemy>().Dmg);
         DodgeVisual();
+    }
+
+    IEnumerator STIncrease()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(0.5f);
+            if (Stamina <= 200)
+            {
+                Stamina += StaminaIncrease;
+            }
+        }
     }
 }

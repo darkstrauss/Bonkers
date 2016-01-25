@@ -375,7 +375,7 @@
             "AttackStats":{
                 "name":"LastSpiral",
                 "comboM":1,
-                "dmg":1,
+                "dmg":1000000,
                 "effect":"none"
             }
         }

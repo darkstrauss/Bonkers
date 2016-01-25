@@ -51,7 +51,7 @@ public class EnemyBehaviour : MonoBehaviour
 
         while (path != null && path.Count > 0 && process)
         {
-            Vector3 movePosition = new Vector3((float)path[path.Count - 1].xPos + 0.5f, 1.0f, (float)path[path.Count - 1].yPos + 0.5f);
+            Vector3 movePosition = new Vector3((float)path[path.Count - 1].xPos + 0.5f, 0.0f, (float)path[path.Count - 1].yPos + 0.5f);
             Quaternion targetRotation = Quaternion.LookRotation(movePosition - gameObject.transform.position);
             gameObject.transform.rotation = targetRotation;
 
@@ -253,7 +253,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void ResetPosition(Vector3 position)
     {
-        transform.position = new Vector3(Mathf.Floor(position.x) + 0.5f, 1.0f, Mathf.Floor(position.z) + 0.5f);
+        transform.position = new Vector3(Mathf.Floor(position.x) + 0.5f, 0.0f, Mathf.Floor(position.z) + 0.5f);
     }
 
     private void ResetPath()

@@ -10,6 +10,7 @@ public class GenerateContent : MonoBehaviour
     public List<Vector3> takenSpots;
     public Text text;
     private Grid grid;
+    private PlayerMovement playerMovement;
     private int lastSelection = -1;
     public int amountOfItems, amountOfEnemies;
     public int SEED;
@@ -17,6 +18,7 @@ public class GenerateContent : MonoBehaviour
 
     void Start()
     {
+        playerMovement = Camera.main.GetComponent<PlayerMovement>();
         grid = GetComponent<Grid>();
 
         if (SEED == 0)
@@ -31,11 +33,11 @@ public class GenerateContent : MonoBehaviour
 
         if (text == null)
         {
-            text = GameObject.FindGameObjectWithTag("Text").GetComponent<Text>();
+            //text = GameObject.FindGameObjectWithTag("Text").GetComponent<Text>();
         }
         if (text != null)
         {
-            text.text = "" + SEED;
+            //text.text = "" + SEED;
         }
         
         Debug.Log("LEVEL SEED: " + SEED);
@@ -142,8 +144,9 @@ public class GenerateContent : MonoBehaviour
         {
             int selection = (int)Random.Range(0, availibleEnemies.Count);
 
-            Vector3 placement = new Vector3(Mathf.Floor(Random.Range(0, grid.xSize)) + 0.5f, 1.0f, Mathf.Floor(Random.Range(0, grid.zSize)) + 0.5f);
+            Vector3 placement = new Vector3(Mathf.Floor(Random.Range(0, grid.xSize)) + 0.5f, 0.0f, Mathf.Floor(Random.Range(0, grid.zSize)) + 0.5f);
             GameObject enemy = Instantiate(availibleEnemies[selection], placement, Quaternion.identity) as GameObject;
+            playerMovement.enemies.Add(enemy);
 
             amountOfEnemies--;
             GenerateEnemies();
